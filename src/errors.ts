@@ -8,6 +8,7 @@ export const ErrorCode = {
   PARTIAL: "PARTIAL",
   BAD_REQUEST: "BAD_REQUEST",
   INTERNAL: "INTERNAL",
+  UNAUTHENTICATED: "UNAUTHENTICATED",
 } as const;
 
 export const LAW_OC_MISSING_MESSAGE =
@@ -62,4 +63,8 @@ export function partial(detail?: string): ApiError {
 
 export function badRequest(message: string): ApiError {
   return new ApiError("BAD_REQUEST", message, 400);
+}
+
+export function unauthenticated(message = "authentication required"): ApiError {
+  return new ApiError("UNAUTHENTICATED", message, 401);
 }

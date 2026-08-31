@@ -18,16 +18,19 @@
     "build": "tsc -p tsconfig.json",
     "start": "tsx src/index.ts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "invite": "tsx src/cli/invite.ts"
   },
   "dependencies": {
+    "@fastify/static": "^8.2.0",
     "@modelcontextprotocol/sdk": "^1.27.1",
+    "better-sqlite3": "~11.10.0",
     "fastify": "^5.4.0",
     "korean-law-mcp": "^4.12.2",
-    "tsx": "^4.20.0",
-    "@fastify/static": "^8.2.0"
+    "tsx": "^4.20.0"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^22.15.0",
     "typescript": "^5.8.0",
     "vitest": "^3.2.0"

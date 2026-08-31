@@ -37,3 +37,10 @@ ehthumbs.db
 .nyc_output/
 .tmp/
 temp/
+
+# local sqlite (users, sessions, per-account records)
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
