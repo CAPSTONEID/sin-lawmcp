@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>법조데스크 — 법령·판례 검색</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="masthead">
+      <div class="brand">
+        <div class="wordmark">법조<em>데스크</em></div>
+        <div class="brand-sub">법령·판례 원문 리서치 · 로컬</div>
+      </div>
+      <div class="mast-right health-bar" id="health">
+        <span class="pill"><span class="dot"></span>확인 중…</span>
+      </div>
+    </header>
+    <nav class="tabs" style="border:0;border-bottom:1px solid var(--rule);margin-bottom:8px">
+      <a class="is-active" href="/" style="padding:12px 16px;font-weight:700;color:var(--ink);text-decoration:none;border-bottom:2px solid var(--accent)">법령·판례 검색</a>
+      <a href="/citations.html" style="padding:12px 16px;color:var(--muted);text-decoration:none">인용 검증</a>
+    </nav>
+
+    <p class="lede">질의만 입력하면 됩니다. 결과는 법제처 원문 링크가 있는 카드로만 표시합니다. 이 화면은 <code>127.0.0.1</code> 로컬 API만 호출합니다.</p>
+
+    <form id="form" class="search-row">
+      <input type="search" id="q" name="q" placeholder="예: 화관법 제27조 영업비밀" autocomplete="off" required />
+      <button class="btn-primary" type="submit" id="go">검색</button>
+    </form>
+    <p class="local-note">공개 배포·버셀 아님. 사건번호·의뢰인 칸 없음.</p>
+
+    <div id="banner"></div>
+    <div id="error"></div>
+    <div id="results" class="results"></div>
+  </div>
+  <script type="module" src="/research.js"></script>
+</body>
+</html>

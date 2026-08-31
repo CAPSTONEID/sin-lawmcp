@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>법조데스크 — 인용 검증</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="masthead">
+      <div class="brand">
+        <div class="wordmark">법조<em>데스크</em></div>
+        <div class="brand-sub">서면 인용 검증 · 로컬</div>
+      </div>
+      <div class="mast-right health-bar" id="health">
+        <span class="pill"><span class="dot"></span>확인 중…</span>
+      </div>
+    </header>
+    <nav class="tabs" style="border:0;border-bottom:1px solid var(--rule);margin-bottom:8px">
+      <a href="/" style="padding:12px 16px;color:var(--muted);text-decoration:none">법령·판례 검색</a>
+      <a class="is-active" href="/citations.html" style="padding:12px 16px;font-weight:700;color:var(--ink);text-decoration:none;border-bottom:2px solid var(--accent)">인용 검증</a>
+    </nav>
+
+    <p class="lede">의견서·서면의 조문 인용을 붙여 넣으면 항목별로 검증합니다. ✓ 하나로 퉁치지 않습니다.</p>
+
+    <form id="form">
+      <textarea class="query" id="text" placeholder="「민법」 제750조 …" required></textarea>
+      <button class="btn-primary" type="submit" id="go">원문 대조</button>
+    </form>
+
+    <div id="error"></div>
+    <div id="results" class="results"></div>
+  </div>
+  <script type="module" src="/citations.js"></script>
+</body>
+</html>
