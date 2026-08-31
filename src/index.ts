@@ -11,7 +11,7 @@ const PORT = Number(process.env.PORT || 3000);
 
 async function main(): Promise<void> {
   const mcp = new StdioKoreanLawMcp();
-  const app = buildApp({ mcp, ocConfigured: () => isOcConfigured() });
+  const app = await buildApp({ mcp, ocConfigured: () => isOcConfigured() });
 
   const shutdown = async () => {
     await app.close();

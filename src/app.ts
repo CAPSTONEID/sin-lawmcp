@@ -1,4 +1,7 @@
 import Fastify, { type FastifyInstance } from "fastify";
+import fastifyStatic from "@fastify/static";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { ApiError, ErrorCode } from "./errors.js";
 import { newRequestId, logLine } from "./logging.js";
 import { openApiDocument } from "./openapi.js";
@@ -10,7 +13,9 @@ declare module "fastify" {
   }
 }
 
-export function buildApp(gw: Gateway): FastifyInstance {
+const webRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "web");
+
+export async function buildApp(gw: Gateway): Promise<FastifyInstance> {
   const app = Fastify({ logger: false, trustProxy: false });
 
   app.addHook("onRequest", async (req) => {
@@ -57,6 +62,11 @@ export function buildApp(gw: Gateway): FastifyInstance {
     }
     const result = await verifyCitations(gw, body.text, req.requestId);
     return reply.send(result);
+  });
+
+  await app.register(fastifyStatic, {
+    root: webRoot,
+    wildcard: false,
   });
 
   return app;

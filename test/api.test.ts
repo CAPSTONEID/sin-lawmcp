@@ -19,14 +19,14 @@ class MockMcp implements McpClient {
   async close(): Promise<void> {}
 }
 
-function appOf(mcp: MockMcp, oc = true) {
-  return buildApp({ mcp, ocConfigured: () => oc });
+async function appOf(mcp: MockMcp, oc = true) {
+  return await buildApp({ mcp, ocConfigured: () => oc });
 }
 
 describe("health", () => {
   it("LAW_OC unset => ocConfigured false and key absent", async () => {
     const mcp = new MockMcp();
-    const app = appOf(mcp, false);
+    const app = await appOf(mcp, false);
     const res = await app.inject({ method: "GET", url: "/v1/health" });
     expect(res.statusCode).toBe(200);
     const body = res.json() as { mcp: string; ocConfigured: boolean };
@@ -45,7 +45,7 @@ describe("citations/verify", () => {
     mcp.tools.set("legal_analysis", () => ({
       text: "[VERIFIED]\n✓ 민법 제750조(불법행위의 내용) 실존",
     }));
-    const app = appOf(mcp);
+    const app = await appOf(mcp);
     const res = await app.inject({ method: "POST", url: "/v1/citations/verify", payload: { text: "민법 제750조" } });
     expect(res.statusCode).toBe(200);
     const item = res.json().items[0];
@@ -60,7 +60,7 @@ describe("citations/verify", () => {
       text: "[HALLUCINATION_DETECTED]\n✗ 형법 제9999조 — [NOT_FOUND] 해당 조문 없음 (존재 범위: 제1조~제372조)",
       isError: true,
     }));
-    const app = appOf(mcp);
+    const app = await appOf(mcp);
     const res = await app.inject({ method: "POST", url: "/v1/citations/verify", payload: { text: "형법 제9999조" } });
     expect(res.statusCode).toBe(200);
     expect(res.json().items[0].verdict).toBe("not_found");
@@ -73,7 +73,7 @@ describe("citations/verify", () => {
       text: "[HALLUCINATION_DETECTED]\n✗ 민법 제750조 — [CONTENT_MISMATCH] 인용 제목 계약해제 ≠ 실제 조문제목 불법행위의 내용",
       isError: true,
     }));
-    const app = appOf(mcp);
+    const app = await appOf(mcp);
     const res = await app.inject({ method: "POST", url: "/v1/citations/verify", payload: { text: "민법 제750조(계약해제)" } });
     expect(res.statusCode).toBe(200);
     expect(res.json().items[0].verdict).toBe("content_mismatch");
@@ -91,7 +91,7 @@ describe("research", () => {
       };
     });
     mcp.tools.set("search_decisions", () => ({ text: "검색 결과 없음 [NOT_FOUND]" }));
-    const app = appOf(mcp);
+    const app = await appOf(mcp);
     const res = await app.inject({ method: "POST", url: "/v1/research", payload: { query: "화관법" } });
     expect(res.statusCode).toBe(200);
     const body = res.json();
@@ -104,7 +104,7 @@ describe("research", () => {
 describe("errors", () => {
   it("OC missing is not HTTP 200 empty results", async () => {
     const mcp = new MockMcp();
-    const app = appOf(mcp, false);
+    const app = await appOf(mcp, false);
     const res = await app.inject({ method: "POST", url: "/v1/research", payload: { query: "민법" } });
     expect(res.statusCode).not.toBe(200);
     const body = res.json();
@@ -117,7 +117,7 @@ describe("errors", () => {
   it("MCP down => MCP_UNAVAILABLE", async () => {
     const mcp = new MockMcp();
     mcp.failConnect = true;
-    const app = appOf(mcp, true);
+    const app = await appOf(mcp, true);
     const res = await app.inject({ method: "POST", url: "/v1/research", payload: { query: "민법" } });
     expect(res.statusCode).toBe(503);
     expect(res.json().code).toBe("MCP_UNAVAILABLE");
@@ -134,7 +134,7 @@ describe("errors", () => {
       text: "<!DOCTYPE html><html>점검</html>",
       isError: true,
     }));
-    const app = appOf(mcp);
+    const app = await appOf(mcp);
     const res = await app.inject({ method: "POST", url: "/v1/research", payload: { query: "민법" } });
     expect(res.statusCode).toBe(502);
     expect(res.json().code).toBe("UPSTREAM_LAW_GO_KR");
@@ -146,7 +146,7 @@ describe("errors", () => {
     const mcp = new MockMcp();
     mcp.tools.set("search_law", () => ({ text: "[NOT_FOUND] 검색 결과 없음" }));
     mcp.tools.set("search_decisions", () => ({ text: "[NOT_FOUND] 검색 결과 없음" }));
-    const app = appOf(mcp);
+    const app = await appOf(mcp);
     const res = await app.inject({ method: "POST", url: "/v1/research", payload: { query: "없는법령xyz" } });
     expect(res.statusCode).toBe(404);
     expect(res.json().code).toBe("NOT_FOUND");
@@ -159,7 +159,7 @@ describe("verify mapping extras", () => {
     mcp.tools.set("legal_analysis", () => ({
       text: "⌛ 구법 제1조 — [REPEALED] 폐지된 법령입니다\n⚠ 제1조 — 법령명 추출 실패",
     }));
-    const app = appOf(mcp);
+    const app = await appOf(mcp);
     const res = await app.inject({ method: "POST", url: "/v1/citations/verify", payload: { text: "구법 제1조 제1조" } });
     const verdicts = res.json().items.map((i: { verdict: string }) => i.verdict);
     expect(verdicts).toContain("repealed");
@@ -173,10 +173,22 @@ describe("verify mapping extras", () => {
     mcp.tools.set("legal_analysis", () => ({
       text: "[NO_CITATIONS_FOUND] 입력 텍스트에서 조문·판례 인용이 발견되지 않았습니다.",
     }));
-    const app = appOf(mcp);
+    const app = await appOf(mcp);
     const res = await app.inject({ method: "POST", url: "/v1/citations/verify", payload: { text: "안녕하세요" } });
     expect(res.statusCode).toBe(200);
     expect(res.json().items[0].verdict).toBe("unverified");
+    await app.close();
+  });
+});
+
+describe("web UI", () => {
+  it("GET / serves local search page", async () => {
+    const mcp = new MockMcp();
+    const app = await appOf(mcp, false);
+    const res = await app.inject({ method: "GET", url: "/" });
+    expect(res.statusCode).toBe(200);
+    expect(String(res.headers["content-type"])).toMatch(/text\/html/);
+    expect(res.body).toMatch(/법령·판례 검색/);
     await app.close();
   });
 });

@@ -55,3 +55,4 @@ Logs omit request bodies and OC. Request id, tool name, and latency are fine. OC
 
 Frontend types: src/types.ts and openapi.yaml
 Attach korean-law-mcp locally over stdio. Never call remote MCP hosts.
+Web UI local: after start open 127.0.0.1:3000 — search / and citations.html. Not Vercel.
