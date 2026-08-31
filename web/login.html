@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>법조데스크 — 로그인</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="app login-app">
+    <header class="masthead">
+      <div class="brand">
+        <div class="wordmark">법조<em>데스크</em></div>
+        <div class="brand-sub">초대된 계정만 · 공개 가입 없음</div>
+      </div>
+    </header>
+
+    <section class="login-card">
+      <h1>로그인</h1>
+      <p class="lede" style="margin:0 0 16px">변호사별 계정으로 들어옵니다. 공용 비밀번호는 없습니다.</p>
+      <form id="form">
+        <label class="field">
+          <span>이메일</span>
+          <input type="email" id="email" name="email" autocomplete="username" required />
+        </label>
+        <label class="field">
+          <span>비밀번호</span>
+          <input type="password" id="password" name="password" autocomplete="current-password" required />
+        </label>
+        <button class="btn-primary" type="submit" id="go">로그인</button>
+      </form>
+      <div id="error"></div>
+      <p class="local-note">계정은 관리자 초대·발급만. LAW_OC는 서버에만 있습니다.</p>
+    </section>
+  </div>
+  <script type="module" src="/login.js"></script>
+</body>
+</html>
