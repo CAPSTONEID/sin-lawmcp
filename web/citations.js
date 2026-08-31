@@ -1,6 +1,7 @@
-import { getHealth, verifyCitations, verdictLabel, errorTitle } from "/api.js";
+import { getHealth, verifyCitations, verdictLabel, errorTitle, requireSession, logout } from "/api.js";
 
 const healthEl = document.getElementById("health");
+const userEl = document.getElementById("user");
 const form = document.getElementById("form");
 const text = document.getElementById("text");
 const go = document.getElementById("go");
@@ -9,6 +10,9 @@ const error = document.getElementById("error");
 
 function pill(ok, label) {
   return `<span class="pill ${ok ? "ok" : "down"}"><span class="dot"></span>${label}</span>`;
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (ch) => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[ch]));
 }
 
 async function refreshHealth() {
@@ -20,10 +24,6 @@ async function refreshHealth() {
   } catch {
     healthEl.innerHTML = pill(false, "API 끊김");
   }
-}
-
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, (ch) => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[ch]));
 }
 
 function itemCard(it) {
@@ -53,6 +53,10 @@ form.addEventListener("submit", async (ev) => {
       ? items.map(itemCard).join("")
       : `<p class="muted">추출된 인용이 없습니다.</p>`;
   } catch (e) {
+    if (e.status === 401 || e.code === "UNAUTHENTICATED") {
+      location.replace("/login.html?next=" + encodeURIComponent("/citations.html"));
+      return;
+    }
     const code = e.code || "INTERNAL";
     const cls = code === "MCP_UNAVAILABLE" ? "mcp" : "";
     error.innerHTML = `<div class="err-box ${cls}"><div class="code">${code}</div><h2>${errorTitle(code)}</h2><p class="muted">${escapeHtml(e.message || "")}</p></div>`;
@@ -62,4 +66,12 @@ form.addEventListener("submit", async (ev) => {
   }
 });
 
-refreshHealth();
+const user = await requireSession();
+if (user) {
+  userEl.innerHTML = `<span class="user-chip">${escapeHtml(user.email)}</span><button type="button" class="btn-ghost" id="logout">로그아웃</button>`;
+  document.getElementById("logout").addEventListener("click", async () => {
+    await logout().catch(() => {});
+    location.replace("/login.html");
+  });
+  refreshHealth();
+}

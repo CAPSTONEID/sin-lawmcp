@@ -746,3 +746,33 @@ textarea.query { width:100%; min-height:160px; resize:vertical; margin: 12px 0; 
 .local-note {
   font-size:12px; color: var(--muted); margin-top:8px;
 }
+
+/* —— login —— */
+.login-app { max-width: 480px; }
+.login-card {
+  background: var(--sheet-raised);
+  border: 1px solid var(--rule);
+  padding: 28px 28px 24px;
+  margin-top: 24px;
+}
+.login-card h1 {
+  font-family: var(--serif);
+  font-size: 24px;
+  margin: 0 0 8px;
+}
+.field { display:block; margin: 0 0 14px; }
+.field span {
+  display:block; font-size:12px; font-weight:700; letter-spacing:.04em;
+  color: var(--muted); margin-bottom:6px;
+}
+.field input {
+  width:100%; font:inherit; padding:11px 12px; border:1px solid var(--rule);
+  background:#fff; border-radius:2px; color: var(--ink); box-sizing:border-box;
+}
+.user-chip {
+  font-size:13px; color: var(--ink-soft); margin-right:8px;
+}
+.btn-ghost {
+  background: transparent; border:1px solid var(--rule); color: var(--ink);
+  padding: 0 12px; min-height:34px; font: inherit; font-weight:600; cursor:pointer;
+}

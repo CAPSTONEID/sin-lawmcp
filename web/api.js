@@ -1,30 +1,9 @@
-/** Local API client — never talks to MCP. Same-origin only. */
+/** Local API client — never talks to MCP. Same-origin + cookies. */
 const API = "";
+const FETCH = { credentials: "include" };
 
-export async function getHealth() {
-  const r = await fetch(`${API}/v1/health`);
-  const body = await r.json().catch(() => ({}));
-  if (!r.ok) throw ObjectApiError(r.status, body);
-  return body;
-}
-
-export async function research(query) {
-  const r = await fetch(`${API}/v1/research`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ query }),
-  });
-  const body = await r.json().catch(() => ({}));
-  if (!r.ok) throw objectApiError(r.status, body);
-  return body;
-}
-
-export async function verifyCitations(text) {
-  const r = await fetch(`${API}/v1/citations/verify`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ text }),
-  });
+async function parse(r) {
+  if (r.status === 204) return null;
   const body = await r.json().catch(() => ({}));
   if (!r.ok) throw objectApiError(r.status, body);
   return body;
@@ -36,6 +15,65 @@ function objectApiError(status, body) {
   err.status = status;
   err.body = body;
   return err;
+}
+
+export async function getHealth() {
+  const r = await fetch(`${API}/v1/health`, FETCH);
+  return parse(r);
+}
+
+export async function research(query) {
+  const r = await fetch(`${API}/v1/research`, {
+    ...FETCH,
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ query }),
+  });
+  return parse(r);
+}
+
+export async function verifyCitations(text) {
+  const r = await fetch(`${API}/v1/citations/verify`, {
+    ...FETCH,
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ text }),
+  });
+  return parse(r);
+}
+
+export async function login(email, password) {
+  const r = await fetch(`${API}/v1/auth/login`, {
+    ...FETCH,
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  return parse(r);
+}
+
+export async function logout() {
+  const r = await fetch(`${API}/v1/auth/logout`, { ...FETCH, method: "POST" });
+  return parse(r);
+}
+
+export async function me() {
+  const r = await fetch(`${API}/v1/auth/me`, FETCH);
+  return parse(r);
+}
+
+/** Redirect to login if session missing. Returns user or null after redirect. */
+export async function requireSession() {
+  try {
+    return await me();
+  } catch (e) {
+    if (e.status === 401 || e.code === "UNAUTHENTICATED") {
+      const next = encodeURIComponent(location.pathname + location.search);
+      location.replace(`/login.html?next=${next}`);
+      return null;
+    }
+    throw e;
+  }
 }
 
 export function verdictLabel(v) {
@@ -59,6 +97,8 @@ export function errorTitle(code) {
       return "법제처 원문 조회 실패";
     case "NOT_FOUND":
       return "해당 조문 없음";
+    case "UNAUTHENTICATED":
+      return "로그인이 필요합니다";
     default:
       return "요청을 처리할 수 없습니다";
   }
