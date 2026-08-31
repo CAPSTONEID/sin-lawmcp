@@ -49,6 +49,15 @@ export interface HealthResponse {
   ocConfigured: boolean;
 }
 
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface MeResponse {
+  email: string;
+}
+
 export type ErrorCode =
   | "LAW_OC_MISSING"
   | "MCP_UNAVAILABLE"
@@ -56,7 +65,8 @@ export type ErrorCode =
   | "NOT_FOUND"
   | "PARTIAL"
   | "BAD_REQUEST"
-  | "INTERNAL";
+  | "INTERNAL"
+  | "UNAUTHENTICATED";
 
 export interface ErrorBody {
   code: ErrorCode;

@@ -1,6 +1,16 @@
 import { randomUUID } from "node:crypto";
 import { maskSecrets } from "./errors.js";
 
+const SKIP = new Set([
+  "body",
+  "query",
+  "text",
+  "LAW_OC",
+  "password",
+  "cookie",
+  "authorization",
+]);
+
 export function newRequestId(): string {
   return randomUUID();
 }
@@ -8,7 +18,7 @@ export function newRequestId(): string {
 export function logLine(fields: Record<string, unknown>): void {
   const safe: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(fields)) {
-    if (k === "body" || k === "query" || k === "text" || k === "LAW_OC") continue;
+    if (SKIP.has(k)) continue;
     safe[k] = typeof v === "string" ? maskSecrets(v) : v;
   }
   process.stderr.write(JSON.stringify(safe) + "\n");
