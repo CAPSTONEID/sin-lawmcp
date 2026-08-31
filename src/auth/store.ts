@@ -2,6 +2,7 @@ import { randomBytes, randomUUID } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import Database from "better-sqlite3";
+import { SESSION_TTL_SECONDS } from "./cookie.js";
 
 export const DEFAULT_DB_PATH = path.join("data", "app.db");
 
@@ -15,14 +16,6 @@ export function normalizeEmail(email: string): string {
 }
 
 export type AuthUser = { id: string; email: string };
-
-export type StoredRecord = {
-  id: string;
-  userId: string;
-  kind: "research" | "verify";
-  body: string;
-  createdAt: string;
-};
 
 export class AuthStore {
   private readonly db: Database.Database;
@@ -54,17 +47,26 @@ export class AuthStore {
       CREATE TABLE IF NOT EXISTS sessions (
         id TEXT PRIMARY KEY,
         user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-        created_at TEXT NOT NULL
+        created_at TEXT NOT NULL,
+        expires_at TEXT NOT NULL
       );
-      CREATE TABLE IF NOT EXISTS records (
-        id TEXT PRIMARY KEY,
-        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-        kind TEXT NOT NULL,
-        body TEXT NOT NULL,
-        created_at TEXT NOT NULL
-      );
-      CREATE INDEX IF NOT EXISTS records_user_id ON records(user_id);
     `);
+    const cols = this.db.prepare("PRAGMA table_info(sessions)").all() as Array<{ name: string }>;
+    if (!cols.some((c) => c.name === "expires_at")) {
+      this.db.exec("ALTER TABLE sessions ADD COLUMN expires_at TEXT");
+      const rows = this.db.prepare("SELECT id, created_at FROM sessions").all() as Array<{
+        id: string;
+        created_at: string;
+      }>;
+      const ttlMs = SESSION_TTL_SECONDS * 1000;
+      const upd = this.db.prepare("UPDATE sessions SET expires_at = ? WHERE id = ?");
+      for (const row of rows) {
+        const start = Date.parse(row.created_at);
+        const expires = new Date((Number.isFinite(start) ? start : Date.now()) + ttlMs).toISOString();
+        upd.run(expires, row.id);
+      }
+    }
+    this.db.exec("DROP TABLE IF EXISTS records");
   }
 
   createUser(email: string, passwordHash: string): AuthUser {
@@ -83,23 +85,28 @@ export class AuthStore {
       .get(normalizeEmail(email)) as { id: string; email: string; passwordHash: string } | undefined;
   }
 
-  createSession(userId: string): string {
+  createSession(userId: string, ttlSeconds: number = SESSION_TTL_SECONDS): string {
     const id = randomBytes(32).toString("base64url");
+    const now = Date.now();
+    const createdAt = new Date(now).toISOString();
+    const expiresAt = new Date(now + ttlSeconds * 1000).toISOString();
     this.db
-      .prepare("INSERT INTO sessions (id, user_id, created_at) VALUES (?, ?, ?)")
-      .run(id, userId, new Date().toISOString());
+      .prepare("INSERT INTO sessions (id, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)")
+      .run(id, userId, createdAt, expiresAt);
     return id;
   }
 
   getSession(sessionId: string): AuthUser | undefined {
     if (!sessionId) return undefined;
+    const now = new Date().toISOString();
+    this.db.prepare("DELETE FROM sessions WHERE expires_at <= ?").run(now);
     return this.db
       .prepare(
         `SELECT u.id AS id, u.email AS email
          FROM sessions s JOIN users u ON u.id = s.user_id
-         WHERE s.id = ?`,
+         WHERE s.id = ? AND s.expires_at > ?`,
       )
-      .get(sessionId) as AuthUser | undefined;
+      .get(sessionId, now) as AuthUser | undefined;
   }
 
   revokeSession(sessionId: string): void {
@@ -107,18 +114,17 @@ export class AuthStore {
     this.db.prepare("DELETE FROM sessions WHERE id = ?").run(sessionId);
   }
 
-  insertRecord(userId: string, kind: "research" | "verify", body: string): void {
-    this.db
-      .prepare("INSERT INTO records (id, user_id, kind, body, created_at) VALUES (?, ?, ?, ?, ?)")
-      .run(randomUUID(), userId, kind, body, new Date().toISOString());
-  }
-
-  listRecords(userId: string): StoredRecord[] {
-    return this.db
-      .prepare(
-        "SELECT id, user_id AS userId, kind, body, created_at AS createdAt FROM records WHERE user_id = ? ORDER BY created_at ASC",
-      )
-      .all(userId) as StoredRecord[];
+  /** Test helper: true if needle appears in any stored row. */
+  containsText(needle: string): boolean {
+    const tables = this.db.prepare("SELECT name FROM sqlite_master WHERE type = 'table'").all() as Array<{
+      name: string;
+    }>;
+    for (const table of tables) {
+      if (!/^[a-z_]+$/i.test(table.name)) continue;
+      const rows = this.db.prepare(`SELECT * FROM ${table.name}`).all();
+      if (JSON.stringify(rows).includes(needle)) return true;
+    }
+    return false;
   }
 
   close(): void {

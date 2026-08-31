@@ -115,23 +115,21 @@ export async function buildApp(gw: Gateway, opts: BuildAppOptions = {}): Promise
   });
 
   app.post("/v1/research", async (req, reply) => {
-    const user = requireAuth(req);
+    requireAuth(req);
     const body = (req.body ?? {}) as { query?: unknown };
     if (typeof body.query !== "string") {
       throw new ApiError(ErrorCode.BAD_REQUEST, "query is required", 400);
     }
-    store.insertRecord(user.id, "research", body.query);
     const result = await research(gw, body.query, req.requestId);
     return reply.send(result);
   });
 
   app.post("/v1/citations/verify", async (req, reply) => {
-    const user = requireAuth(req);
+    requireAuth(req);
     const body = (req.body ?? {}) as { text?: unknown };
     if (typeof body.text !== "string") {
       throw new ApiError(ErrorCode.BAD_REQUEST, "text is required", 400);
     }
-    store.insertRecord(user.id, "verify", body.text);
     const result = await verifyCitations(gw, body.text, req.requestId);
     return reply.send(result);
   });

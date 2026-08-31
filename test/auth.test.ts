@@ -93,7 +93,7 @@ describe("login then research", () => {
 });
 
 describe("isolation", () => {
-  it("A stored query is not visible to B", async () => {
+  it("does not persist query or verify bodies, and B cannot see A", async () => {
     const mcp = new MockMcp();
     mcp.tools.set("search_law", () => ({
       text: "법령명: 민법\nhttps://www.law.go.kr/법령/민법",
@@ -102,8 +102,8 @@ describe("isolation", () => {
     const store = AuthStore.open(":memory:");
     const secretA = "secret-a-ok";
     const secretB = "secret-b-ok";
-    const userA = await seedUser(store, "a@example.com", secretA);
-    const userB = await seedUser(store, "b@example.com", secretB);
+    await seedUser(store, "a@example.com", secretA);
+    await seedUser(store, "b@example.com", secretB);
     const app = await buildApp({ mcp, ocConfigured: () => true }, { store });
     const sidA = await loginSid(app, "a@example.com", secretA);
     const sidB = await loginSid(app, "b@example.com", secretB);
@@ -115,16 +115,36 @@ describe("isolation", () => {
       cookies: { sid: sidA },
     });
     expect(created.statusCode).toBe(200);
-
-    const recordsA = store.listRecords(userA.id);
-    const recordsB = store.listRecords(userB.id);
-    expect(recordsA.some((r) => r.body.includes("비밀질의-A"))).toBe(true);
-    expect(recordsB.some((r) => r.body.includes("비밀질의-A"))).toBe(false);
-    expect(recordsB).toHaveLength(0);
+    expect(store.containsText("비밀질의-A")).toBe(false);
 
     const meB = await app.inject({ method: "GET", url: "/v1/auth/me", cookies: { sid: sidB } });
     expect(meB.json().email).toBe("b@example.com");
     expect(JSON.stringify(meB.json())).not.toContain("비밀질의-A");
+    await app.close();
+  });
+});
+
+describe("session expiry", () => {
+  it("expired server session is rejected even if cookie is still sent", async () => {
+    const mcp = new MockMcp();
+    mcp.tools.set("search_law", () => ({
+      text: "법령명: 민법\nhttps://www.law.go.kr/법령/민법",
+    }));
+    mcp.tools.set("search_decisions", () => ({ text: "[NOT_FOUND] 검색 결과 없음" }));
+    const store = AuthStore.open(":memory:");
+    const secret = "secret-ok-ok";
+    const user = await seedUser(store, "lawyer@example.com", secret);
+    const expiredSid = store.createSession(user.id, -1);
+    const app = await buildApp({ mcp, ocConfigured: () => true }, { store });
+    const res = await app.inject({
+      method: "POST",
+      url: "/v1/research",
+      payload: { query: "민법" },
+      cookies: { sid: expiredSid },
+    });
+    expect(res.statusCode).toBe(401);
+    expect(res.json().code).toBe("UNAUTHENTICATED");
+    expect(store.getSession(expiredSid)).toBeUndefined();
     await app.close();
   });
 });

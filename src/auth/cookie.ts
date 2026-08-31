@@ -1,5 +1,5 @@
 export const SESSION_COOKIE = "sid";
-const MAX_AGE_SECONDS = 60 * 60 * 24 * 7;
+export const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
 
 export function parseCookieValue(header: string | undefined, name: string): string | undefined {
   if (!header) return undefined;
@@ -24,7 +24,7 @@ export function serializeSessionCookie(
 ): string {
   const value = opts.clear ? "" : sessionId;
   const parts = [`${SESSION_COOKIE}=${value}`, "Path=/", "HttpOnly", "SameSite=Lax"];
-  parts.push(opts.clear ? "Max-Age=0" : `Max-Age=${MAX_AGE_SECONDS}`);
+  parts.push(opts.clear ? "Max-Age=0" : `Max-Age=${SESSION_TTL_SECONDS}`);
   if (opts.secure) parts.push("Secure");
   return parts.join("; ");
 }
