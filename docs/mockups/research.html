@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>법령·판례 검색 — 법조데스크</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="masthead">
+      <div class="brand">
+        <div class="wordmark">법조<em>데스크</em></div>
+        <div class="brand-sub">법령·판례 원문 리서치</div>
+      </div>
+      <div class="mast-right">
+        <div class="firm">한빛 법률사무소 · 변리사 김서연</div>
+        <div class="health-row">
+          <span class="pill ok"><span class="dot"></span>MCP 정상</span>
+          <span class="pill ok"><span class="dot"></span>OC 정상</span>
+          <span class="pill warn"><span class="dot"></span>판례 브랜치 지연</span>
+        </div>
+      </div>
+    </header>
+    <nav class="nav" aria-label="주 메뉴">
+      <a href="index.html">목업 허브</a>
+      <a class="is-active" href="research.html">법령·판례 검색</a>
+      <a href="citations.html">인용 검증</a>
+      <a href="errors.html">장애·상태</a>
+    </nav>
+
+    <form class="query-bar" action="#" onsubmit="return false">
+            <input id="q" type="text" aria-label="질의" value="화관법 제27조 영업비밀 보호 및 누설 제재" />
+      <button class="btn" type="button">검색</button>
+    </form>
+
+    <div class="alias" role="status">
+      <span class="pill">약칭 해석</span>
+      <span>질의어 <kbd>화관법</kbd></span>
+      <span class="arrow">→</span>
+      <strong>화학물질관리법</strong>
+      <span style="color:var(--muted)">법률 제20467호 · 약칭 「화관법」 · 법제처 약칭표 매칭</span>
+    </div>
+
+    <div class="layout">
+      <aside class="aside">
+        <div class="aside-block">
+          <h2>결과 구성</h2>
+          <div class="facet"><span>법령</span><span class="n">2 · 확정</span></div>
+          <div class="facet"><span>판례</span><span class="n">1 · 부분</span></div>
+          <div class="facet"><span>원문 링크</span><span class="n">카드당 1</span></div>
+        </div>
+        <div class="aside-block">
+          <h2>원문 기준</h2>
+          <p>모든 카드는 법제처 국가법령정보센터 원문 URL을 포함합니다. 원문 없는 카드는 표시하지 않습니다.</p>
+        </div>
+        <div class="aside-block">
+          <h2>범위 밖 (v1 제외)</h2>
+          <p>문서검토, 사건번호, 의뢰인명, 계약서 업로드는 이 화면에 두지 않습니다.</p>
+        </div>
+      </aside>
+
+      <main>
+        <div class="meta-row">
+          <span>질의 시각 2026. 8. 31. 15:12 (KST) · 현행 법령 기준</span>
+          <span>확정 3건 · 보류 1 브랜치</span>
+        </div>
+
+        <div class="banner partial" role="status">
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+            <path d="M9 2 16 15H2L9 2Z" fill="none" stroke="#6b4a1a" stroke-width="1.4"/>
+            <path d="M9 7v4.2M9 13.2h.01" stroke="#6b4a1a" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          <div>
+            <strong>부분 결과</strong> — 법령 브랜치는 성공, 판례 색인 브랜치 1개가 지연·실패했습니다.
+            아래는 확정된 법령 2건과 캐시에서 복구한 판례 1건입니다. 「결과 없음」이 아닙니다.
+            실패 브랜치: <code>precedent.scourt</code> HTTP 503.
+          </div>
+        </div>
+
+        <!-- statute 1 -->
+        <article class="card">
+          <div class="card-head">
+            <span class="kind">법령</span>
+            <span class="pill">현행</span>
+          </div>
+          <h3>화학물질관리법</h3>
+          <div class="article">제27조 (영업비밀의 보호)</div>
+          <p class="excerpt">환경부장관은 이 법에 따른 업무를 수행함에 있어 알게 된 <em>영업비밀</em>을 누설하거나 직무상 목적 외에 사용하여서는 아니 된다. 제26조에 따라 정보를 제공받은 자도 또한 같다.</p>
+          <dl class="card-meta">
+            <dd>전부개정 2013. 6. 4. 법률 제11862호</dd>
+            <dd>현행 법률 제20467호</dd>
+            <dd>시행 2015. 1. 1.</dd>
+            <dd>소관 환경부</dd>
+          </dl>
+          <a class="orig" href="https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=253401#J27:0" target="_blank" rel="noopener">
+            <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 3h4v1.2H4.2V9.8H9.8V7H11v4H3V3zm5.2 0H11v2.8h-1.2V5.05L6.6 8.25 5.75 7.4 9.0 4.2H8.2V3z" fill="#1e4a73"/></svg>
+            법제처 원문
+            <span class="url">law.go.kr/LSW/lsInfoP.do?lsiSeq=253401#J27:0</span>
+          </a>
+        </article>
+
+        <!-- statute 2 -->
+        <article class="card">
+          <div class="card-head">
+            <span class="kind">법령</span>
+            <span class="pill">현행 · 벌칙</span>
+          </div>
+          <h3>화학물질관리법</h3>
+          <div class="article">제59조 (벌칙) 제1항 제8호</div>
+          <p class="excerpt">다음 각 호의 어느 하나에 해당하는 자는 5년 이하의 징역 또는 1억 원 이하의 벌금에 처한다. … 8. 제27조를 위반하여 <em>영업비밀을 누설하거나 직무상 목적 외에 사용</em>한 자</p>
+          <dl class="card-meta">
+            <dd>제27조 위반 제재 조문</dd>
+            <dd>현행 법률 제20467호</dd>
+            <dd>소관 환경부</dd>
+          </dl>
+          <a class="orig" href="https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=253401#J59:0" target="_blank" rel="noopener">
+            <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 3h4v1.2H4.2V9.8H9.8V7H11v4H3V3zm5.2 0H11v2.8h-1.2V5.05L6.6 8.25 5.75 7.4 9.0 4.2H8.2V3z" fill="#1e4a73"/></svg>
+            법제처 원문
+            <span class="url">law.go.kr/LSW/lsInfoP.do?lsiSeq=253401#J59:0</span>
+          </a>
+        </article>
+
+        <!-- precedent -->
+        <article class="card">
+          <div class="card-head">
+            <span class="kind case">판례</span>
+            <span class="pill warn">캐시 복구 · 색인 지연</span>
+          </div>
+          <h3>대법원 2019. 8. 14. 선고 2018다220837 판결</h3>
+          <div class="article">부정경쟁방지 및 영업비밀보호에 관한 법률 — 영업비밀의 비밀관리성</div>
+          <p class="excerpt">정보가 비밀로 유지되기 위하여 합리적인 노력에 의하여 관리되고 있었는지 여부는 해당 정보에 대한 접근을 제한하는 조치, 비밀표시, 보안교육 등 객관적 사정을 종합하여 판단한다. 화학물질 제조공정에 관한 자료도 같은 법리에 따른다.</p>
+          <dl class="card-meta">
+            <dd>민사 · 영업비밀 침해</dd>
+            <dd>관련 조문: 화관법 제27조, 부정경쟁방지법 제2조 제2호</dd>
+          </dl>
+          <a class="orig" href="https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=253401#J27:0" target="_blank" rel="noopener">
+            <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 3h4v1.2H4.2V9.8H9.8V7H11v4H3V3zm5.2 0H11v2.8h-1.2V5.05L6.6 8.25 5.75 7.4 9.0 4.2H8.2V3z" fill="#1e4a73"/></svg>
+            관련 법령 법제처 원문 (화관법 제27조)
+            <span class="url">law.go.kr/LSW/lsInfoP.do?lsiSeq=253401#J27:0</span>
+          </a>
+        </article>
+      </main>
+    </div>
+
+    <footer class="foot">
+      <span>POST /v1/research · 원문 없는 카드는 렌더하지 않음</span>
+      <span>법제처 국가법령정보센터</span>
+    </footer>
+  </div>
+</body>
+</html>

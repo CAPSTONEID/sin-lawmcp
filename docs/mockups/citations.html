@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>인용 검증 — 법조데스크</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="masthead">
+      <div class="brand">
+        <div class="wordmark">법조<em>데스크</em></div>
+        <div class="brand-sub">법령·판례 원문 리서치</div>
+      </div>
+      <div class="mast-right">
+        <div class="firm">한빛 법률사무소 · 변호사 이도윤</div>
+        <div class="health-row">
+          <span class="pill ok"><span class="dot"></span>MCP 정상</span>
+          <span class="pill ok"><span class="dot"></span>OC 정상</span>
+        </div>
+      </div>
+    </header>
+    <nav class="nav" aria-label="주 메뉴">
+      <a href="index.html">목업 허브</a>
+      <a href="research.html">법령·판례 검색</a>
+      <a class="is-active" href="citations.html">인용 검증</a>
+      <a href="errors.html">장애·상태</a>
+    </nav>
+
+    <div class="layout">
+      <aside class="aside">
+        <div class="aside-block">
+          <h2>판정 범례</h2>
+          <div class="legend-item">
+            <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#2c5a4a"/><path d="M4.6 8.2 7 10.5 11.5 5.6" fill="none" stroke="#fbf8f1" stroke-width="1.7"/></svg>
+            <span><strong>실존</strong> — 조문·제목 모두 원문과 일치. 유일하게 통과 표시.</span>
+          </div>
+          <div class="legend-item">
+            <svg width="16" height="16" viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" fill="none" stroke="#8c2f2a" stroke-width="1.6"/><path d="M5 5l6 6M11 5l-6 6" stroke="#8c2f2a" stroke-width="1.6"/></svg>
+            <span><strong>조문 없음</strong> — 해당 번호가 현행 법령에 존재하지 않음.</span>
+          </div>
+          <div class="legend-item">
+            <svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 2.2 14.4 13.5H1.6L8 2.2Z" fill="#f3dd9a" stroke="#8a5a12" stroke-width="1.4"/><path d="M8 6.2v3.6M8 11.6h.01" stroke="#8a5a12" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span><strong>제목 불일치</strong> — 조문은 있으나 인용 제목이 원문과 다름. 통과가 아님.</span>
+          </div>
+          <div class="legend-item">
+            <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.2" fill="none" stroke="#5c564c" stroke-width="1.5"/><path d="M4.2 11.8 11.8 4.2" stroke="#5c564c" stroke-width="1.5"/></svg>
+            <span><strong>폐지</strong> — 구법·폐지 조문. 회색·취소선. 초록 표시 없음.</span>
+          </div>
+          <div class="legend-item">
+            <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.2" fill="none" stroke="#6a6560" stroke-width="1.4" stroke-dasharray="2 2"/><text x="8" y="11.2" text-anchor="middle" font-size="9" font-family="Pretendard,sans-serif" fill="#6a6560">?</text></svg>
+            <span><strong>미검증</strong> — 법령명 불명. 점선. 체크 표시 없음.</span>
+          </div>
+        </div>
+        <div class="aside-block">
+          <h2>집계</h2>
+          <div class="facet"><span>실존</span><span class="n">1</span></div>
+          <div class="facet"><span>조문 없음</span><span class="n">1</span></div>
+          <div class="facet"><span>제목 불일치</span><span class="n">1</span></div>
+          <div class="facet"><span>폐지</span><span class="n">1</span></div>
+          <div class="facet"><span>미검증</span><span class="n">1</span></div>
+        </div>
+      </aside>
+
+      <main>
+        <h1 class="page-title">서면 인용 검증</h1>
+        <p class="lede">의견서·준비서면에 적힌 법령 인용을 법제처 원문과 대조합니다. 사건번호·의뢰인 식별자는 받지 않습니다. 조문 카드에는 항상 법제처 원문 링크를 붙입니다.</p>
+
+        <label class="panel-label" for="brief">서면 본문</label>
+        <textarea id="brief" class="paste" readonly>제3. 법리
+
+가. 불법행위책임
+「민법」 제750조(불법행위의 내용)는 고의 또는 과실로 인한 위법행위로 타인에게 손해를 가한 자는 그 손해를 배상할 책임이 있다고 정한다.
+
+나. 형사책임
+상대방의 영업비밀 누설은 「형법」 제9999조에 해당한다고 본다.
+
+다. 계약관계
+같은 「민법」 제750조(계약해제)에 따라 본건 계약을 해제할 수 있다.
+
+라. 구법 인용
+구 「유해화학물질 관리법」 제44조에 따른 영업비밀 보호의무가 적용된다.
+
+마. 영업비밀
+「영업비밀보호법」 제3조에 따라 비밀관리성이 인정된다.</textarea>
+        <div class="paste-actions">
+          <span>5개 인용 추출 · POST /v1/citations/verify</span>
+          <button class="btn" type="button" style="min-height:36px;padding:0 16px">원문 대조</button>
+        </div>
+
+        <h2 class="panel-label">대조 결과</h2>
+        <div class="status-list">
+
+          <!-- EXISTS -->
+          <article class="status exists">
+            <div class="ico" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 28 28">
+                <circle cx="14" cy="14" r="13" fill="#2c5a4a"/>
+                <path d="M8 14.2 12.1 18.1 20 9.6" fill="none" stroke="#fbf8f1" stroke-width="2.2"/>
+              </svg>
+            </div>
+            <div>
+              <p class="cite">민법 제750조 (불법행위의 내용)</p>
+              <p class="note"><span class="badge">실존 · 원문일치</span>조문 번호와 제목이 현행 원문과 일치합니다. 이 목록에서 통과(✓) 표시는 이 상태뿐입니다.</p>
+              <p class="excerpt" style="margin-top:8px">고의 또는 과실로 인한 위법행위로 타인에게 손해를 가한 자는 그 손해를 배상할 책임이 있다.</p>
+              <footer>
+                <a class="orig" style="border:0;padding:0;width:auto" href="https://www.law.go.kr/법령/민법/제750조">법제처 원문 · law.go.kr/법령/민법/제750조</a>
+                <span>시행 2024. 5. 17. · 법률 제19492호</span>
+              </footer>
+            </div>
+          </article>
+
+          <!-- NOT FOUND -->
+          <article class="status not-found">
+            <div class="ico" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 28 28">
+                <rect x="2" y="2" width="24" height="24" fill="#8c2f2a"/>
+                <path d="M9 9l10 10M19 9 9 19" stroke="#fbf8f1" stroke-width="2.2"/>
+              </svg>
+            </div>
+            <div>
+              <p class="cite">형법 제9999조</p>
+              <p class="note"><span class="badge">조문 없음</span>해당 조문이 현행 「형법」에 존재하지 않습니다. 존재 범위는 <strong>제1조~제372조</strong>입니다. 조회 실패가 아니라 원문상 부존재입니다.</p>
+              <footer>
+                <a class="orig" style="border:0;padding:0;width:auto" href="https://www.law.go.kr/법령/형법">법제처 원문(형법 목차) · law.go.kr/법령/형법</a>
+                <span>현행 법률 제20231호</span>
+              </footer>
+            </div>
+          </article>
+
+          <!-- CONTENT MISMATCH — must not look like pass -->
+          <article class="status mismatch">
+            <div class="ico" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 28 28">
+                <path d="M14 3.2 25.4 23.2H2.6L14 3.2Z" fill="#f3dd9a" stroke="#8a5a12" stroke-width="1.8"/>
+                <path d="M14 10.2v6.4M14 19.8h.01" stroke="#8a5a12" stroke-width="2.1" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="cite">민법 제750조 <span class="wrong">(계약해제)</span></p>
+              <p class="note"><span class="badge">제목 불일치 · 통과 아님</span>조문 <strong>번호는 존재</strong>하나 인용 제목이 원문과 다릅니다. 실존(✓)으로 취급하지 마십시오. 계약해제는 민법 제543조 이하입니다.</p>
+              <div class="compare">
+                <div>
+                  <span class="lbl">서면 인용 제목</span>
+                  <span class="wrong">계약해제</span>
+                </div>
+                <div>
+                  <span class="lbl">법제처 원문 제목</span>
+                  <strong>불법행위의 내용</strong>
+                </div>
+              </div>
+              <footer>
+                <a class="orig" style="border:0;padding:0;width:auto" href="https://www.law.go.kr/법령/민법/제750조">법제처 원문 · law.go.kr/법령/민법/제750조</a>
+                <span>대조: 제543조(해제의 효과)와 혼동 가능</span>
+              </footer>
+            </div>
+          </article>
+
+          <!-- REPEALED -->
+          <article class="status repealed">
+            <div class="ico" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 28 28">
+                <circle cx="14" cy="14" r="11.5" fill="none" stroke="#5c564c" stroke-width="1.8"/>
+                <path d="M6.4 21.2 21.6 6.8" stroke="#5c564c" stroke-width="1.8"/>
+              </svg>
+            </div>
+            <div>
+              <p class="cite">유해화학물질 관리법 제44조</p>
+              <p class="note"><span class="badge">폐지</span>2013. 6. 4. 법률 제11862호로 「화학물질관리법」 전부개정 — 구 「유해화학물질 관리법」은 폐지되었습니다. 초록 통과 표시를 쓰지 않습니다.</p>
+              <footer>
+                <a class="orig" style="border:0;padding:0;width:auto" href="https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=253401">후신 법령 법제처 원문 · 화학물질관리법 (law.go.kr)</a>
+                <span>구법 제44조 취지는 현행 제27조 부근에서 확인</span>
+              </footer>
+            </div>
+          </article>
+
+          <!-- UNVERIFIED -->
+          <article class="status unverified">
+            <div class="ico" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 28 28">
+                <circle cx="14" cy="14" r="11.5" fill="none" stroke="#6a6560" stroke-width="1.7" stroke-dasharray="3 2.2"/>
+                <text x="14" y="19" text-anchor="middle" font-size="14" font-family="Pretendard, Noto Sans KR, sans-serif" fill="#6a6560">?</text>
+              </svg>
+            </div>
+            <div>
+              <p class="cite">「영업비밀보호법」 제3조</p>
+              <p class="note"><span class="badge">미검증 · 법령명 불명확</span>정식 법령명을 특정할 수 없어 원문 대조를 수행하지 않았습니다. 실패도, 실존도 아닙니다. 체크(✓) 표시를 붙이지 않습니다.</p>
+              <p class="note">후보: <strong>부정경쟁방지 및 영업비밀보호에 관한 법률</strong> (약칭 부정경쟁방지법). 「영업비밀보호법」이라는 독립 법률은 없습니다.</p>
+              <footer>
+                <a class="orig" style="border:0;padding:0;width:auto" href="https://www.law.go.kr/법령/부정경쟁방지및영업비밀보호에관한법률">후보 법령 법제처 원문 · law.go.kr</a>
+                <span>사용자 확인 후 재검증</span>
+              </footer>
+            </div>
+          </article>
+
+        </div>
+      </main>
+    </div>
+
+    <footer class="foot">
+      <span>POST /v1/citations/verify · exists | not_found | content_mismatch | repealed | unverified</span>
+      <span>불일치·폐지·미검증은 통과 UI를 재사용하지 않음</span>
+    </footer>
+  </div>
+</body>
+</html>

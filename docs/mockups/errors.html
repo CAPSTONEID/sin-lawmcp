@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>장애·상태 — 법조데스크</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .state-anchor { scroll-margin-top: 12px; margin: 28px 0 10px; }
+    .state-anchor .n {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.14em; color: var(--accent);
+    }
+    .state-anchor h2 {
+      font-family: var(--serif); font-size: 20px; margin: 4px 0 0; font-weight: 650;
+    }
+    .empty-contrast {
+      margin-top: 14px; padding: 12px 14px; border: 1px dashed var(--rule);
+      background: var(--paper); font-size: 13px; color: var(--muted);
+    }
+    .empty-contrast strong { color: var(--ink); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="masthead">
+      <div class="brand">
+        <div class="wordmark">법조<em>데스크</em></div>
+        <div class="brand-sub">법령·판례 원문 리서치</div>
+      </div>
+      <div class="mast-right">
+        <div class="firm">한빛 법률사무소 · 시스템 상태</div>
+        <div class="health-row" id="head-health">
+          <span class="pill down"><span class="dot"></span>표시용 목업</span>
+        </div>
+      </div>
+    </header>
+    <nav class="nav" aria-label="주 메뉴">
+      <a href="index.html">목업 허브</a>
+      <a href="research.html">법령·판례 검색</a>
+      <a href="citations.html">인용 검증</a>
+      <a class="is-active" href="errors.html">장애·상태</a>
+    </nav>
+
+    <p class="lede">연결 장애는 검색 「결과 없음」과 다른 전용 화면입니다. 아래 네 상태를 탭으로 전환하거나 스크롤하여 비교하십시오. GET /v1/health → mcp + oc.</p>
+
+    <div class="tabs" role="tablist" aria-label="장애 상태">
+      <button type="button" role="tab" aria-selected="false" data-tab="oc">A. OC 키 없음</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="mcp">B. MCP 중단</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="lookup">C. 원문 503 vs 조문 없음</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="partial">D. 부분 결과</button>
+      <button type="button" role="tab" aria-selected="true" data-tab="all">전체 나란히</button>
+    </div>
+
+    <!-- A. OC missing -->
+    <section class="panel" id="panel-oc" data-panel="oc">
+      <div class="error-hero oc">
+        <p class="error-kicker">GET /v1/health · oc = missing</p>
+        <p class="not-empty">결과 없음 화면 아님 · 설정 오류</p>
+        <h1>법제처 Open API 인증키(OC)가 등록되지 않았습니다</h1>
+        <p>법제처 원문 조회에 필요한 서버 인증키가 없습니다. 연구 질의를 실행할 수 없습니다. 빈 카드 목록 대신 이 오류만 표시합니다.</p>
+        <ul class="checklist">
+          <li>
+            <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.2" fill="none" stroke="#8c2f2a" stroke-width="1.4"/><path d="M8 5v4M8 11h.01" stroke="#8c2f2a" stroke-width="1.5"/></svg>
+            OC 키 환경변수 없음 또는 만료
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.2" fill="#2c5a4a"/><path d="M5 8.1 7.2 10.2 11.2 6" fill="none" stroke="#fff" stroke-width="1.4"/></svg>
+            MCP(법제처 원문 조회)는 정상 — 키가 등록되면 즉시 검색 가능
+          </li>
+        </ul>
+        <button class="btn" type="button">관리자에게 키 등록 요청</button>
+        <div class="empty-contrast">비교: 「결과 없음」은 질의는 성공했으나 매칭 조문이 0건인 경우입니다. 본 화면은 질의를 보내기 전 구성 오류입니다.</div>
+      </div>
+    </section>
+
+    <!-- B. MCP down -->
+    <section class="panel" id="panel-mcp" data-panel="mcp">
+      <div class="error-hero mcp">
+        <p class="error-kicker">GET /v1/health · mcp = down</p>
+        <p class="not-empty">결과 없음 화면 아님 · 원문 파이프라인 중단</p>
+        <h1>법령 MCP 서버에 연결할 수 없습니다</h1>
+        <p>법제처 원문 조회 경로가 내려가 있어 조문 카드를 만들 수 없습니다. 원문 URL 없는 추정 결과는 표시하지 않는 것이 원칙이므로, 검색 결과 영역 자체를 열지 않습니다.</p>
+        <div class="health-row" style="margin:14px 0 18px">
+          <span class="pill down"><span class="dot"></span>MCP 중단</span>
+          <span class="pill ok"><span class="dot"></span>OC 정상</span>
+        </div>
+        <ul class="checklist">
+          <li>
+            <svg width="16" height="16" viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" fill="none" stroke="#8c2f2a" stroke-width="1.4"/><path d="M5 5l6 6M11 5l-6 6" stroke="#8c2f2a" stroke-width="1.4"/></svg>
+            원문 링크를 보증할 수 없으므로 카드 목록을 렌더하지 않음
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.2" fill="none" stroke="#6b4a1a" stroke-width="1.4"/><path d="M8 5v4M8 11h.01" stroke="#6b4a1a" stroke-width="1.5"/></svg>
+            재시도 후에도 실패하면 지식관리 담당자에게 에스컬레이션
+          </li>
+        </ul>
+        <button class="btn" type="button">연결 다시 시도</button>
+        <button class="btn ghost" type="button" style="margin-left:8px">상태 로그</button>
+      </div>
+    </section>
+
+    <!-- C. 503 vs NOT_FOUND -->
+    <section class="panel" id="panel-lookup" data-panel="lookup">
+      <p class="lede" style="margin-top:0">같은 「조문을 못 보여 줌」이 아닙니다. 왼쪽은 시스템 장애(미확정), 오른쪽은 원문상 부존재(확정).</p>
+      <div class="split">
+        <div class="col">
+          <span class="tag-503">LOOKUP_FAILURE · HTTP 503</span>
+          <h2>법제처 원문 조회 실패</h2>
+          <p style="font-size:13.5px;color:var(--ink-soft)">law.go.kr가 503을 반환했거나 게이트웨이가 시간 초과했습니다. <strong>해당 조문의 존재 여부는 아직 확인되지 않았습니다.</strong></p>
+          <article class="status unverified" style="margin-top:12px">
+            <div class="ico">
+              <svg width="28" height="28" viewBox="0 0 28 28">
+                <circle cx="14" cy="14" r="11.5" fill="none" stroke="#6b4a1a" stroke-width="1.7"/>
+                <path d="M14 8v7M14 19.5h.01" stroke="#6b4a1a" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <p class="cite">화학물질관리법 제27조</p>
+              <p class="note"><span class="badge">원문 조회 실패</span>미확정. 조문 없음으로 기록하지 말 것. 재시도 대상.</p>
+              <footer>
+                <span>law.go.kr · 503 Service Unavailable</span>
+                <button class="btn ghost" type="button" style="min-height:30px;padding:0 10px;font-size:12px">이 조문만 재조회</button>
+              </footer>
+            </div>
+          </article>
+        </div>
+        <div class="col">
+          <span class="tag-nf">NOT_FOUND · 확정</span>
+          <h2>해당 조문 없음</h2>
+          <p style="font-size:13.5px;color:var(--ink-soft)">원문 조회는 <strong>성공</strong>했고, 그 결과 번호가 존재하지 않음이 확인되었습니다. 재시도해도 조문이 생기지 않습니다.</p>
+          <article class="status not-found" style="margin-top:12px">
+            <div class="ico">
+              <svg width="28" height="28" viewBox="0 0 28 28">
+                <rect x="2" y="2" width="24" height="24" fill="#8c2f2a"/>
+                <path d="M9 9l10 10M19 9 9 19" stroke="#fbf8f1" stroke-width="2.2"/>
+              </svg>
+            </div>
+            <div>
+              <p class="cite">형법 제9999조</p>
+              <p class="note"><span class="badge">조문 없음</span>확정. 존재 범위 제1조~제372조. 시스템 장애가 아닙니다.</p>
+              <footer>
+                <a class="orig" style="border:0;padding:0;width:auto" href="https://www.law.go.kr/법령/형법">법제처 원문(형법) · law.go.kr</a>
+              </footer>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- D. partial -->
+    <section class="panel" id="panel-partial" data-panel="partial">
+      <div class="banner partial" role="status">
+        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+          <path d="M9 2 16 15H2L9 2Z" fill="none" stroke="#6b4a1a" stroke-width="1.4"/>
+          <path d="M9 7v4.2M9 13.2h.01" stroke="#6b4a1a" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <div>
+          <strong>부분 결과 배너</strong> — 법령 브랜치 성공, 판례 브랜치 실패. 성공 분기는 카드로 보여 주고, 실패 분기는 이 배너로만 알립니다.
+          전체 장애 화면(OC/MCP)도, 빈 결과도 아닙니다.
+        </div>
+      </div>
+      <article class="card">
+        <div class="card-head"><span class="kind">법령</span><span class="pill">확정</span></div>
+        <h3>화학물질관리법</h3>
+        <div class="article">제27조 (영업비밀의 보호)</div>
+        <p class="excerpt">환경부장관은 이 법에 따른 업무를 수행함에 있어 알게 된 영업비밀을 누설하거나 직무상 목적 외에 사용하여서는 아니 된다.</p>
+        <a class="orig" href="https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=253401#J27:0">
+          법제처 원문
+          <span class="url">law.go.kr/LSW/lsInfoP.do?lsiSeq=253401#J27:0</span>
+        </a>
+      </article>
+      <div class="banner error">
+        <svg width="18" height="18" viewBox="0 0 18 18"><rect x="2" y="2" width="14" height="14" fill="none" stroke="#8c2f2a" stroke-width="1.4"/><path d="M6 6l6 6M12 6 6 12" stroke="#8c2f2a" stroke-width="1.4"/></svg>
+        <div><strong>판례 브랜치 실패</strong> — <code>precedent.scourt</code> 503. 판례 카드 0건은 「판례 없음」이 아니라 「아직 조회하지 못함」입니다.</div>
+      </div>
+    </section>
+
+    <!-- ALL stacked for screenshot -->
+    <section class="panel is-on" id="panel-all" data-panel="all">
+      <div class="state-anchor">
+        <div class="n">A · OC KEY MISSING</div>
+        <h2>전용 오류 — 결과 없음과 분리</h2>
+      </div>
+      <div class="error-hero oc">
+        <p class="error-kicker">oc = missing</p>
+        <p class="not-empty">결과 없음 아님</p>
+        <h1>법제처 Open API 인증키(OC)가 등록되지 않았습니다</h1>
+        <p>연구 질의를 실행할 수 없습니다. 빈 카드 목록을 대신 보여 주지 않습니다.</p>
+      </div>
+
+      <div class="state-anchor">
+        <div class="n">B · MCP DOWN</div>
+        <h2>원문 파이프라인 중단</h2>
+      </div>
+      <div class="error-hero mcp">
+        <p class="error-kicker">mcp = down</p>
+        <p class="not-empty">결과 없음 아님</p>
+        <h1>법령 MCP 서버에 연결할 수 없습니다</h1>
+        <p>원문 URL을 보증할 수 없어 검색 결과 영역을 열지 않습니다.</p>
+        <div class="health-row" style="margin-top:12px">
+          <span class="pill down"><span class="dot"></span>MCP 중단</span>
+          <span class="pill ok"><span class="dot"></span>OC 정상</span>
+        </div>
+      </div>
+
+      <div class="state-anchor">
+        <div class="n">C · LOOKUP 503 ≠ NOT_FOUND</div>
+        <h2>미확정 장애 vs 확정 부존재</h2>
+      </div>
+      <div class="split">
+        <div class="col">
+          <span class="tag-503">503 · 미확정</span>
+          <h2>원문 조회 실패</h2>
+          <p style="font-size:13.5px">조문 존재 여부를 단정하지 않음. 재시도. 점선·경고.</p>
+        </div>
+        <div class="col">
+          <span class="tag-nf">NOT_FOUND · 확정</span>
+          <h2>조문 없음</h2>
+          <p style="font-size:13.5px">원문 조회 성공, 번호 부존재 확정. 빨간 사각 X. 재시도 무의미.</p>
+        </div>
+      </div>
+
+      <div class="state-anchor">
+        <div class="n">D · PARTIAL</div>
+        <h2>성공 분기는 카드, 실패 분기는 배너</h2>
+      </div>
+      <div class="banner partial">
+        <svg width="18" height="18" viewBox="0 0 18 18"><path d="M9 2 16 15H2L9 2Z" fill="none" stroke="#6b4a1a" stroke-width="1.4"/><path d="M9 7v4.2M9 13.2h.01" stroke="#6b4a1a" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <div><strong>부분 결과</strong> — 법령 성공 · 판례 실패. 전체 장애 화면도, 빈 결과도 아님.</div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>GET /v1/health · OC 누락과 MCP 중단은 전용 오류 UI</span>
+      <span>503 조회실패 ≠ NOT_FOUND</span>
+    </footer>
+  </div>
+  <script>
+    (function () {
+      var tabs = document.querySelectorAll('[role="tab"]');
+      var panels = document.querySelectorAll('[data-panel]');
+      function show(id) {
+        tabs.forEach(function (t) {
+          t.setAttribute('aria-selected', t.getAttribute('data-tab') === id ? 'true' : 'false');
+        });
+        panels.forEach(function (p) {
+          p.classList.toggle('is-on', p.getAttribute('data-panel') === id);
+        });
+      }
+      tabs.forEach(function (t) {
+        t.addEventListener('click', function () { show(t.getAttribute('data-tab')); });
+      });
+    })();
+  </script>
+</body>
+</html>

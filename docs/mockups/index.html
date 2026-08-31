@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>법조데스크 — 화면 목업</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="masthead">
+      <div class="brand">
+        <div class="wordmark">법조<em>데스크</em></div>
+        <div class="brand-sub">법령·판례 원문 리서치 · v1 정적 목업</div>
+      </div>
+      <div class="mast-right">
+        <div class="firm">한빛 법률사무소 · 지식관리</div>
+        <div class="health-row">
+          <span class="pill ok"><span class="dot"></span>MCP 정상</span>
+          <span class="pill ok"><span class="dot"></span>OC 정상</span>
+        </div>
+      </div>
+    </header>
+    <nav class="nav" aria-label="주 메뉴">
+      <a class="is-active" href="index.html">목업 허브</a>
+      <a href="research.html">법령·판례 검색</a>
+      <a href="citations.html">인용 검증</a>
+      <a href="errors.html">장애·상태</a>
+    </nav>
+
+    <p class="lede">변호사·변리사 내부 도구. 채팅 UI가 아니며, 모든 조문 카드는 법제처(law.go.kr) 원문 URL을 필수 표시합니다. v1 범위: <strong>연구 검색</strong>, <strong>인용 검증</strong>, <strong>연결 상태</strong>. 문서검토·사건번호·의뢰인·계약서 업로드는 넣지 않습니다.</p>
+
+    <div class="hub-grid">
+      <a class="hub-card" href="research.html">
+        <div class="n">01 · POST /v1/research</div>
+        <h2>법령·판례 검색 결과</h2>
+        <p>질의 「화관법 제27조 영업비밀」. 약칭 해석(화관법 → 화학물질관리법), 법령·판례 카드, 부분결과 배너, 카드마다 법제처 원문 링크.</p>
+      </a>
+      <a class="hub-card" href="citations.html">
+        <div class="n">02 · POST /v1/citations/verify</div>
+        <h2>서면 인용 검증</h2>
+        <p>의견서 붙여넣기. 실존 / 조문 없음 / 제목 불일치 / 폐지 / 미검증 — 다섯 상태를 아이콘·라벨·테두리로 구분. 불일치는 통과처럼 보이지 않음.</p>
+      </a>
+      <a class="hub-card" href="errors.html">
+        <div class="n">03 · GET /v1/health</div>
+        <h2>장애·상태 전용 화면</h2>
+        <p>OC 키 없음, MCP 중단, law.go.kr 503 vs 조문 없음(NOT_FOUND), 부분결과 배너. 「결과 없음」과 절대 같은 화면을 쓰지 않음.</p>
+      </a>
+      <div class="hub-card">
+        <div class="n">설계 메모</div>
+        <h2>책상 위 서류</h2>
+        <p>지(紙)색 배경, 남색 잉크, 인주 레드 하나. 세리프 법령명, 고밀도. 상태 판정은 색에만 의존하지 않음(도형+한글 라벨).</p>
+      </div>
+    </div>
+
+    <footer class="foot">
+      <span>정적 HTML 목업 · API는 설계 대상일 뿐 구현하지 않음</span>
+      <span>원문 기준: 법제처 국가법령정보센터</span>
+    </footer>
+  </div>
+</body>
+</html>
